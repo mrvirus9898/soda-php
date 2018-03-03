@@ -1,71 +1,53 @@
 <?php
   require_once("socrata.php");
-
   function array_get($needle, $haystack) {
     return (in_array($needle, array_keys($haystack)) ? $haystack[$needle] : NULL);
   }
-
-  $view_uid = "h8x4-nvyi";
-  $root_url = "data.austintexas.gov";
-  $app_token = "B0ixMbJj4LuQVfYnz95Hfp3Ni";
+  $view_uid = "u4d7-xz8k";
+  $root_url = "data.cdc.gov";
+  $app_token = "bjp8KrRvAPtuf809u1UXnI0Z8";
   $response = NULL;
+  
+  //Swap the comments to see the difference between in constructors
+  //$socrata = new Socrata($root_url, $app_token);
+  $socrata = new Socrata($root_url, $app_token, "","",20000);
+  
+  //uncomment so you can see the difference in limits
+  //Remeber to change the offset and limit BEFORE you get
+  //$socrata->set_limit(5000);
+  
+  
+  $response = $socrata->get($view_uid);
+  $total = 0;
 
-  $latitude = array_get("latitude", $_POST);
-  $longitude = array_get("longitude", $_POST);
-  $range = array_get("range", $_POST);
-
-  if($latitude != NULL && $longitude != NULL && $range != NULL) {
-    // Create a new unauthenticated client
-    $socrata = new Socrata($root_url, $app_token);
-
-    $params = array("\$where" => "within_circle(location, $latitude, $longitude, $range)");
-
-    $response = $socrata->get($view_uid, $params);
-  }
 ?>
 <html>
   <head>
-    <title>Austin Dangerous Dogs</title>
+    <title>Leading Cause of Death Info</title>
   </head>
   <body>
-    <h1>Austin Dangerous Dogs</h1>
+    <h1>Leading Cause of Death Info</h1>
 
-    <p>If you get no results, its likely because there are no dangerous dogs at that location. Try another lat/long.</p>
-
-    <?php if($response == NULL) { ?>
-      <form action="index.php" method="POST">
-        <label for="latitude">Latitude</label>
-        <input type="text" name="latitude" size="10" value="30.244588"/><br/>
-
-        <label for="longitude">Longitude</label>
-        <input type="text" name="longitude" size="10" value="-97.5824817"/><br/>
-
-        <label for="range">Range</label>
-        <input type="text" name="range" size="10" value="10000"/><br/>
-
-        <input type="submit" value="Submit"/>
-      </form>
-    <?php } else { ?>
       <h2>Results</h2>
 
       <?# Create a table for our actual data ?>
       <table border="1">
-        <tr>
-          <th>Description</th>
-          <th>Address</th>
-        </tr>
         <?# Print rows ?>
         <?php foreach($response as $row) { ?>
           <tr>
-            <td><?= $row["description_of_dog"] ?></td>
-            <td><a href="https://www.google.com/maps/search/<?= $row["location"]["coordinates"][1] ?>,<?= $row["location"]["coordinates"][0] ?>"><?= $row["address"] ?></a></td>
-          </tr>
-        <?php } ?>
+            <td><?= $row["_113_cause_name"] ?></td>
+            <td><?= $row["aadr"] ?></td>
+            <td><?= $row["cause_name"] ?></td>
+            <td><?= $row["deaths"] ?></td>
+            <td><?= $row["state"] ?></td>
+            <td><?= $row["year"] ?></td>
+            </tr>
+        <?php $total++;}  ?>
       </table>
+      <?php echo "Total entries: $total"; ?>
+      
 
-      <h3>Raw Response</h3>
-      <pre><?= var_dump($response) ?></pre>
-    <?php } ?>
+      <!--<h3>Raw Response</h3>-->
+     <!--<pre><?//= var_dump($response) ?></pre>-->
   </body>
 </html>
-
