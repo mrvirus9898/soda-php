@@ -16,7 +16,7 @@ class Socrata {
   private $offset = "";
   
   // Basic constructor
-  public function __construct($root_url = "", $app_token = "",  $user_name = "", $password = "", $limit = 1000) {
+  public function __construct($root_url = "", $app_token = "",  $user_name = "", $password = "", $limit = 1000, $offset = 0) {
     // For consistency with other libraries, accept just the domain name for the root
     if(!preg_match("/^https?:\/\//i", $root_url)) {
       $root_url = "https://" . $root_url;
@@ -26,7 +26,7 @@ class Socrata {
     $this->user_name = $user_name;
     $this->password = $password;
     $this->limit = $limit; //By default, the limit on socrata is 1000, this is the same if you use the default URL
-    $this->offset = 0; //By default, there is no offset. Warning offset 0 is not the same as offset 1
+    $this->offset = $offset; //By default, there is no offset. Warning offset 0 is not the same as offset 1
     return true;
   }
   
