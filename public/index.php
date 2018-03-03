@@ -15,6 +15,7 @@
   //uncomment so you can see the difference in limits
   //Remeber to change the offset and limit BEFORE you get
   //$socrata->set_limit(5000);
+  //$socrata->set_offest(2);
   
   
   $response = $socrata->get($view_uid);
